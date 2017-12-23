@@ -24,7 +24,6 @@ let getWordsToFillTheLine = function (length, words) {
 const input = fs.readFileSync(sourceFile, 'utf8');
 
 let words = R.compose(
-  R.sortBy(w => w.length),
   R.reject(w => w === ''),
   R.split(/\s/)
 )(input);
