@@ -6,18 +6,17 @@ const targetFile = process.argv[3];
 
 let getWordsToFillTheLine = function (length, words) {
   let word;
-  let i = 0;
-  for (i; i < words.length; i++) {
-    word = words[i];
-    if (word.length <= length) {
+  let i = length;
+  for (i; i >= 0; i--) {
+    if (i <= length && words[i] && words[i].length > 0) {
+      word = words[i].pop();
       break;
     }
   }
-
   if (word && word.length === length) {
     return [word]
   } else if (word && word.length < length) {
-    return [word].concat(getWordsToFillTheLine(length - word.length - 1, words.slice(i + 1)))
+    return [word].concat(getWordsToFillTheLine(length - word.length - 1, words))
   }
   return [];
 };
@@ -31,23 +30,27 @@ let words = R.compose(
   R.split(/\s/),
 )(input);
 
+const totalNumberOfWords = words.length;
+
+const wordsLengthMap =   R.reduce((o, w) => {
+  const length = w.length;
+  if (!o[length]) {
+    o[length] = []
+  }
+  o[length].push(w);
+  return o;
+}, {}, words);
+
 const results = [];
 const lineLength = 80;
+let wordCounter = 0;
 
 while (true) {
-  if (words.length === 0) {
+  let foundWords = getWordsToFillTheLine(lineLength, wordsLengthMap);
+  wordCounter += foundWords.length;
+  results.push(foundWords.join(' '));
+  if (wordCounter >= totalNumberOfWords) {
     break;
-  } else {
-    let foundWords = getWordsToFillTheLine(lineLength, words);
-
-    foundWords.forEach(foundWord => {
-      const index = words.indexOf(foundWord);
-      if (index !== -1) {
-        words.splice(index, 1);
-      }
-    });
-
-    results.push(foundWords.join(' '));
   }
 }
 
