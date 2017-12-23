@@ -1,5 +1,5 @@
 const fs = require('fs');
-const R = require('ramda')
+const R = require('ramda');
 
 const sourceFile = process.argv[2];
 const targetFile = process.argv[3];
@@ -14,9 +14,9 @@ let getWordsToFillTheLine = function (length, words) {
     }
   }
   if (word && word.length === length) {
-    return [word]
+    return [word];
   } else if (word && word.length < length) {
-    return [word].concat(getWordsToFillTheLine(length - word.length - 1, words))
+    return [word].concat(getWordsToFillTheLine(length - word.length - 1, words));
   }
   return [];
 };
@@ -26,18 +26,18 @@ const input = fs.readFileSync(sourceFile, 'utf8');
 let words = R.compose(
   R.sortBy(w => w.length),
   R.reject(w => w === ''),
-  R.split(/\s/),
+  R.split(/\s/)
 )(input);
 
 const totalNumberOfWords = words.length;
 
-const wordsLengthMap =   R.reduce((o, w) => {
+const wordsLengthMap = R.reduce((map, w) => {
   const length = w.length;
-  if (!o[length]) {
-    o[length] = []
+  if (!map[length]) {
+    map[length] = []
   }
-  o[length].push(w);
-  return o;
+  map[length].push(w);
+  return map;
 }, {}, words);
 
 const results = [];
